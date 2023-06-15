@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<head>
+    <style>
+        body {
+            font-family: 'Work Sans', sans-serif;
+            padding: 10px;
+            padding-top: 5px;
+            background-color: rgb(250,250,250);
+            color: rgb(22,22,22);
+            text-align: center;
+        }
+        .darkbody {
+            background-color: rgb(25,25,25);
+            color: rgb(221,221,221);
+        }
+        input, select, button {
+            height: 4vh;
+            border-radius: 4px;
+            background-color: rgb(240,240,240);
+            color: rgb(22,22,22);
+            padding: 2px;
+            border-color: rgb(22,22,22);
+        }
+        .darkinput {
+            background-color: rgb(50,50,50);
+            color: rgb(221,221,221);
+            border-color: rgb(221,221,221);
+        }
+        .smalltext {
+            width: 7%;
+        }
+        .resultDiv {
+            background-color: rgb(210,210,210);
+            height: 20vh;
+            border-radius: 8px;
+            margin-left: 10vw;
+            margin-right: 10vw;
+            display: flex;
+            align-items: center;
+    justify-content: center;
+
+        }
+        .darkresult {
+            background-color: rgb(75,75,75);
+        }
+        .nightchange {
+            float: right
+        }
+        .nightchange:hover {
+            cursor: pointer
+        }
+    </style>
+</head>
+
+<body>
+    <img class="nightchange" width="32px" height="32px" id="changetheme">
+        <h1>AddTime</h1> 
+    <i>A simple website for adding or subtracting time. Want a <a
+            href="https://github.com/Dinoosauro/AddTime/tree/main/node">console version</a>?</i>
+    <br><br>
+    <select id="add" data-show="a">
+        <option>Seconds</option>
+        <option value="1">Minutes</option>
+        <option value="2">Hours</option>
+    </select>
+    <input type="number" id="addtype" data-show="a">
+    <input type="number" id="houradd" data-show="b" class="smalltext">
+    <l data-show="b"> hours </l> <input type="number" id="minuteadd" data-show="b" class="smalltext">
+    <l data-show="b"> minutes </l><input type="number" id="secondadd" data-show="b" class="smalltext">
+    <l data-show="b"> seconds</l>
+    <button id="addbtn" style="padding-left: 10px; padding-right: 10px;">Add</button><br><br>
+    <input type="checkbox" id="typecheck" style="height: auto"><l>Add time in three different textbox (one for hours, one for minutes and one for seconds)</l>
+    <br><br><br><br>
+    <div class="resultDiv">
+        <div>
+    <l id="text">The result will appear here!</l><br><br>
+    <select id="changetype">
+        <option value="0">Show in seconds</option>
+        <option value="1">Show in minutes</option>
+        <option value="2">Show in hours</option>
+    </select>
+</div>
+</div>
+</div>
+    <script>
+        let valueStore = [0, 0, false] // First item: total seconds; second item: show by hours/minutes/seconds; third item: dark mode enabled
+        function modeChange(isNight) {
+            let changeSelect = document.querySelectorAll("select,input,button");
+            if (isNight) {
+                document.body.classList.add("darkbody");
+                for (let i = 0; i < changeSelect.length; i++) changeSelect[i].classList.add("darkinput");
+                document.getElementsByClassName("resultDiv")[0].classList.add("darkresult");
+                document.getElementById("changetheme").src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTM3LjkwMjYgMzMuMDA5M0MzMi45MzIgNDEuNjE4NSAyMS45MjM0IDQ0LjU2ODMgMTMuMzE0MSAzOS41OTc3QzEwLjk2OTYgMzguMjQ0MSA4Ljk5NTg3IDM2LjQxMjkgNy40OTI2IDM0LjIzQzYuOTkgMzMuNTAwMSA3LjMxNTExIDMyLjQ5MjIgOC4xNDk0NCAzMi4xOTM2QzE0LjkyOTggMjkuNzY2OCAxOC41NjEyIDI2Ljk1NDYgMjAuNjY4NSAyMi45MzJDMjIuODg3IDE4LjY5NzMgMjMuNDYwMyAxNC4wNTg2IDIxLjkwODMgNy43MDAxOUMyMS42OTM3IDYuODIwOTYgMjIuMzg4MiA1Ljk4MzggMjMuMjkyIDYuMDMyMjhDMjYuMDk0MSA2LjE4MjYyIDI4LjgzMTYgNi45ODc1MyAzMS4zMTQxIDguNDIwODJDMzkuOTIzNCAxMy4zOTE0IDQyLjg3MzEgMjQuNCAzNy45MDI2IDMzLjAwOTNaTTIyLjg4MyAyNC4wOTIyQzIwLjU3OTggMjguNDg4OCAxNi43NzA4IDMxLjUyMyAxMC40NTY2IDMzLjk5ODlDMTEuNjA3MyAzNS4zNjUgMTIuOTkxMSAzNi41MjQ1IDE0LjU2NDEgMzcuNDMyN0MyMS45Nzc3IDQxLjcxMjkgMzEuNDU3MyAzOS4xNzI4IDM1LjczNzUgMzEuNzU5M0M0MC4wMTc3IDI0LjM0NTcgMzcuNDc3NiAxNC44NjYxIDMwLjA2NDEgMTAuNTg1OUMyOC41MjY3IDkuNjk4MjUgMjYuODcxOSA5LjA4NzM4IDI1LjE1NzUgOC43Njc1OUwyNC42ODg1IDguNjg3NkMyNS44ODE4IDE0LjY1NTMgMjUuMjggMTkuNTE2NyAyMi44ODMgMjQuMDkyMloiIGZpbGw9IiNkZGRkZGQiLz4KPC9zdmc+"
+            } else {
+                document.body.classList.remove("darkbody");
+                for (let i = 0; i < changeSelect.length; i++) changeSelect[i].classList.remove("darkinput");
+                document.getElementsByClassName("resultDiv")[0].classList.remove("darkresult");
+                setLightIcon();
+            }
+            valueStore[2] = isNight;
+        }
+        function setLightIcon() {
+            // Creating a function for this and not for the dark mode since, otherwise, I would have copy and pasted a long SVG base64 both in the HTML src and then in the modeChange function. With this, I can put nothing in the HTML src and then change the icon at the start directly from JavaScript.
+                document.getElementById("changetheme").src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIzLjk5OSA0LjAwMDk4QzI0LjY4OTMgNC4wMDA5OCAyNS4yNDkgNC41NjA2MiAyNS4yNDkgNS4yNTA5OFY3Ljc1MDk4QzI1LjI0OSA4LjQ0MTMzIDI0LjY4OTMgOS4wMDA5OCAyMy45OTkgOS4wMDA5OEMyMy4zMDg2IDkuMDAwOTggMjIuNzQ5IDguNDQxMzMgMjIuNzQ5IDcuNzUwOThWNS4yNTA5OEMyMi43NDkgNC41NjA2MiAyMy4zMDg2IDQuMDAwOTggMjMuOTk5IDQuMDAwOThaTTI0LjA0NjYgMzQuMDIxOEMyOS41NTU4IDM0LjAyMTggMzQuMDIxOSAyOS41NTU3IDM0LjAyMTkgMjQuMDQ2NUMzNC4wMjE5IDE4LjUzNzMgMjkuNTU1OCAxNC4wNzEyIDI0LjA0NjYgMTQuMDcxMkMxOC41MzczIDE0LjA3MTIgMTQuMDcxMiAxOC41MzczIDE0LjA3MTIgMjQuMDQ2NUMxNC4wNzEyIDI5LjU1NTcgMTguNTM3MyAzNC4wMjE4IDI0LjA0NjYgMzQuMDIxOFpNMjQuMDQ2NiAzMS41MjE4QzE5LjkxODEgMzEuNTIxOCAxNi41NzEyIDI4LjE3NSAxNi41NzEyIDI0LjA0NjVDMTYuNTcxMiAxOS45MTggMTkuOTE4MSAxNi41NzEyIDI0LjA0NjYgMTYuNTcxMkMyOC4xNzUxIDE2LjU3MTIgMzEuNTIxOSAxOS45MTggMzEuNTIxOSAyNC4wNDY1QzMxLjUyMTkgMjguMTc1IDI4LjE3NTEgMzEuNTIxOCAyNC4wNDY2IDMxLjUyMThaTTQyLjc1IDI1LjI1MDJDNDMuNDQwMyAyNS4yNTAyIDQ0IDI0LjY5MDYgNDQgMjQuMDAwMkM0NCAyMy4zMDk5IDQzLjQ0MDMgMjIuNzUwMiA0Mi43NSAyMi43NTAySDQwLjI1QzM5LjU1OTYgMjIuNzUwMiAzOSAyMy4zMDk5IDM5IDI0LjAwMDJDMzkgMjQuNjkwNiAzOS41NTk2IDI1LjI1MDIgNDAuMjUgMjUuMjUwMkg0Mi43NVpNMjMuOTk5IDM5LjAwMDVDMjQuNjg5MyAzOS4wMDA1IDI1LjI0OSAzOS41NjAyIDI1LjI0OSA0MC4yNTA1VjQyLjc1MDJDMjUuMjQ5IDQzLjQ0MDYgMjQuNjg5MyA0NC4wMDAyIDIzLjk5OSA0NC4wMDAyQzIzLjMwODYgNDQuMDAwMiAyMi43NDkgNDMuNDQwNiAyMi43NDkgNDIuNzUwMlY0MC4yNTA1QzIyLjc0OSAzOS41NjAyIDIzLjMwODYgMzkuMDAwNSAyMy45OTkgMzkuMDAwNVpNNy43NDk5NSAyNS4yNTAyQzguNDQwMyAyNS4yNTAyIDguOTk5OTUgMjQuNjkwNiA4Ljk5OTk1IDI0LjAwMDJDOC45OTk5NSAyMy4zMDk5IDguNDQwMyAyMi43NTAyIDcuNzQ5OTUgMjIuNzUwMkg1LjI0OTUxQzQuNTU5MTYgMjIuNzUwMiAzLjk5OTUxIDIzLjMwOTkgMy45OTk1MSAyNC4wMDAyQzMuOTk5NTEgMjQuNjkwNiA0LjU1OTE2IDI1LjI1MDIgNS4yNDk1MSAyNS4yNTAySDcuNzQ5OTVaTTkuMzY2MDcgOS4zNjY0N0M5Ljg1NDIyIDguODc4MzIgMTAuNjQ1NyA4Ljg3ODMyIDExLjEzMzggOS4zNjY0N0wxMy42MzM4IDExLjg2NjVDMTQuMTIyIDEyLjM1NDYgMTQuMTIyIDEzLjE0NjEgMTMuNjMzOCAxMy42MzQyQzEzLjE0NTcgMTQuMTIyNCAxMi4zNTQyIDE0LjEyMjQgMTEuODY2MSAxMy42MzQyTDkuMzY2MDcgMTEuMTM0MkM4Ljg3NzkxIDEwLjY0NjEgOC44Nzc5MSA5Ljg1NDYzIDkuMzY2MDcgOS4zNjY0N1pNMTEuMTMzOCAzOC42MzQ3QzEwLjY0NTcgMzkuMTIyOSA5Ljg1NDIyIDM5LjEyMjkgOS4zNjYwNyAzOC42MzQ3QzguODc3OTEgMzguMTQ2NiA4Ljg3NzkxIDM3LjM1NTEgOS4zNjYwNyAzNi44NjdMMTEuODY2MSAzNC4zNjdDMTIuMzU0MiAzMy44Nzg4IDEzLjE0NTcgMzMuODc4OCAxMy42MzM4IDM0LjM2N0MxNC4xMjIgMzQuODU1MSAxNC4xMjIgMzUuNjQ2NiAxMy42MzM4IDM2LjEzNDdMMTEuMTMzOCAzOC42MzQ3Wk0zOC42MzQ4IDkuMzY2NDdDMzguMTQ2NyA4Ljg3ODMyIDM3LjM1NTIgOC44NzgzMiAzNi44NjcgOS4zNjY0N0wzNC4zNjcgMTEuODY2NUMzMy44Nzg5IDEyLjM1NDYgMzMuODc4OSAxMy4xNDYxIDM0LjM2NyAxMy42MzQyQzM0Ljg1NTIgMTQuMTIyNCAzNS42NDY3IDE0LjEyMjQgMzYuMTM0OCAxMy42MzQyTDM4LjYzNDggMTEuMTM0MkMzOS4xMjMgMTAuNjQ2MSAzOS4xMjMgOS44NTQ2MyAzOC42MzQ4IDkuMzY2NDdaTTM2Ljg2NyAzOC42MzQ3QzM3LjM1NTIgMzkuMTIyOSAzOC4xNDY3IDM5LjEyMjkgMzguNjM0OCAzOC42MzQ3QzM5LjEyMyAzOC4xNDY2IDM5LjEyMyAzNy4zNTUxIDM4LjYzNDggMzYuODY3TDM2LjEzNDggMzQuMzY3QzM1LjY0NjcgMzMuODc4OCAzNC44NTUyIDMzLjg3ODggMzQuMzY3IDM0LjM2N0MzMy44Nzg5IDM0Ljg1NTEgMzMuODc4OSAzNS42NDY2IDM0LjM2NyAzNi4xMzQ3TDM2Ljg2NyAzOC42MzQ3WiIgZmlsbD0iIzE2MTYxNiIvPgo8L3N2Zz4K"
+        }
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) modeChange(true); else setLightIcon(); // If dark mode is enabled, change it immediately. Otherwise, set only the dark mode icon.
+        document.getElementById("changetheme").onclick = function() {
+            modeChange(!valueStore[2]);
+        }
+        // data-show = b are all the elements that must be visible if the user prefers having three textboxes, while data-show = a are all the elements that must be visible if the user wants to manually add minutes/seconds/hours with only a textbox and a select.
+        let hideOption = document.querySelectorAll(`[data-show=b]`);
+        for (let i = 0; i < hideOption.length; i++) hideOption[i].style.display = "none"; // by default, there's only a select.
+        document.getElementById("typecheck").onchange = function () { // Make the checkbox that changes input mode work
+            let showItem = ["a", "b"] // The type of data-show at position zero will be visible, the type at position one will be hidden.
+            if (document.getElementById("typecheck").checked) showItem = ["b", "a"];
+            let dataShowZero = document.querySelectorAll(`[data-show=${showItem[0]}]`);
+            let dataShowOne = document.querySelectorAll(`[data-show=${showItem[1]}]`);
+            for (let i = 0; i < dataShowZero.length; i++) dataShowZero[i].style.display = "inline";
+            for (let i = 0; i < dataShowOne.length; i++) dataShowOne[i].style.display = "none";
+        }
+        document.getElementById("addbtn").onclick = function () {
+            console.log("Here");
+            if (!document.getElementById("typecheck").checked) { 
+                switch (document.getElementById("add").value) { // Check if the user has chosen minutes, hours or seconds from the select item
+                    case "1": // Minutes
+                        valueStore[0] += parseInt(document.getElementById("addtype").value) * 60;
+                        break;
+                    case "2": // Hours
+                        valueStore[0] += parseInt(document.getElementById("addtype").value) * 3600;
+                        break;
+                    default: // Seconds
+                        valueStore[0] += parseInt(document.getElementById("addtype").value);
+                        break;
+                }
+            } else { // Add all the three textboxes' value to the second variable.
+                valueStore[0] += (checkValue(document.getElementById("houradd").value) * 3600) + (checkValue(document.getElementById("minuteadd").value) * 60) + checkValue(document.getElementById("secondadd").value);
+            }
+            showPrompt();
+        }
+        function checkValue(value) { 
+            if (isNaN(value) || value.replaceAll(" ", "") === "" || value.indexOf("e") !== -1) return 0; else return parseInt(value); // If the value is empty or not a number, return zero. Otherwise, return the value. This avoids that NaN is obtained.
+        }
+        function showPrompt() {
+            let seconds = valueStore[0]; // Setting seconds as a variable so that this part can be the same as the node.js script.
+            switch (valueStore[1]) {
+                case 1: // Minutes
+                    document.getElementById("text").innerHTML = `${Math.floor(seconds / 60)} minutes and ${parseInt(seconds) - (Math.floor(parseInt(seconds) / 60) * 60)} seconds [${seconds} seconds...]`;
+                    break;
+                case 2: // Hours
+                    document.getElementById("text").innerHTML = `${Math.floor(seconds / 3600)} hours, ${Math.floor((seconds - (Math.floor(seconds / 3600) * 3600)) / 60)} minutes and ${seconds - (Math.floor(seconds / 60) * 60)} seconds [${seconds} seconds...]`;
+                    break;
+                default: // Seconds
+                    document.getElementById("text").innerHTML = `${valueStore[0]} seconds`;
+                    break;
+
+            }
+        }
+        document.getElementById("changetype").onchange = function () { // Change theme
+            valueStore[1] = parseInt(document.getElementById("changetype").value);
+            showPrompt();
+        }
+    </script>
+</body>
